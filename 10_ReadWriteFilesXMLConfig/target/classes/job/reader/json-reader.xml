@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:batch="http://www.springframework.org/schema/batch"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/batch
+		http://www.springframework.org/schema/batch/spring-batch.xsd">
+
+	 <!-- FlatFileItemReader identifies data fields from file lines -->
+ 	<bean id="jsonReader" class="org.springframework.batch.item.file.FlatFileItemReader" scope="step">
+		<property name="resource" value="file:input/product.json" />
+
+		<property name="recordSeparatorPolicy" ref="productRecordSeparatorPolicy"/>
+		<property name="lineMapper" ref="productLineMapper"/>
+	</bean>
+
+	<!-- RecordSeparatorPolicy interface identifies and delimits records in a file -->
+	<bean id="productRecordSeparatorPolicy" class="org.springframework.batch.item.file.separator.DefaultRecordSeparatorPolicy"/>
+	
+	<!-- The LineMapper interface is responsible for extracting data from lines -->
+	<bean id="productLineMapper" class="com.ds.JsonLineMapperWrapper"/>
+
+
+</beans>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:batch="http://www.springframework.org/schema/batch"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/batch
+		http://www.springframework.org/schema/batch/spring-batch.xsd">
+
+	<!-- FlatFileItemReader identifies data fields from file lines -->
+	<bean id="jdbcPagingReader"
+		class="org.springframework.batch.item.database.JdbcPagingItemReader">
+		<property name="dataSource" ref="dataSource" />
+		<property name="queryProvider" ref="productQueryProvider" />
+		<property name="pageSize" value="1500" />
+		<property name="rowMapper" ref="productRowMapper" />
+	</bean>
+
+	<bean id="productQueryProvider"
+		class="org.springframework.batch.item.database.support.SqlPagingQueryProviderFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="selectClause" value="select id, name, description, price" />
+		<property name="fromClause" value="from product" />
+		<property name="sortKey" value="name" />
+	</bean>
+	<bean id="productRowMapper" class="com.ds.ProductRowMapper" />
+</beans>
