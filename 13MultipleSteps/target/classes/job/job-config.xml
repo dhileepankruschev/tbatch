@@ -11,30 +11,38 @@
 	<import resource="../config/datasource-config.xml" />
 	<import resource="../config/job-context.xml" />
 	
-
-	<bean id="processor" class="com.ds.ProductItemProcessor"/>	
-	<bean id="betterProductProcessor" class="com.ds.BetterProductItemProcessor"/>	
- 	<bean id="writer" class="org.springframework.batch.item.support.ListItemWriter" />
-	<bean id="memoryItemReader" class="com.ds.MemoryItemReader">
-		<constructor-arg ref="writer" />
-	</bean>	
-
-	<batch:job id="importProducts">
-		<batch:step id="readWriteProducts" next="readWriteBetterProducts">
+	<bean id="stepListener" class="com.ds.listeners.ProductStepListener"/>
+	
+	<batch:job id="importProducts" job-repository="jobRepository">
+ 		<batch:step id="readWriteProducts" next="readWriteBetterProducts"> 
 			<batch:tasklet>
-				<batch:chunk reader="reader" processor="processor" writer="writer" commit-interval="100"/>
+ 		
+ 			<batch:listeners>
+				<batch:listener ref="stepListener"/>
+			</batch:listeners>
+ 		
+				<batch:chunk reader="csvProductReader" processor="processor" writer="jdbcProductWriter" commit-interval="100"/>
 			</batch:tasklet>
 		</batch:step>
 		
-		<batch:step id="readWriteBetterProducts">
+ 		<batch:step id="readWriteBetterProducts">
 			<batch:tasklet>
-				<batch:chunk reader="memoryItemReader" processor="betterProductProcessor" writer="betterProductItemWriter" commit-interval="100"/>
+				<batch:chunk reader="jdbcProductReader" processor="betterProductProcessor" writer="betterProductCsvWriter" commit-interval="100"/>
 			</batch:tasklet>
 		</batch:step>
-	</batch:job>
+
+ 	</batch:job>
 
 
- 	<bean id="reader" class="org.springframework.batch.item.file.FlatFileItemReader" scope="step">
+	<bean id="jdbcProductReader" class="org.springframework.batch.item.database.JdbcCursorItemReader" scope="step">
+		<property name="dataSource" ref="dataSource" />
+		<property name="sql" value="select * from product where price > #{jobParameters['price']}" />
+		<property name="rowMapper">
+			<bean class="com.ds.ProductRowMapper" />
+		</property>
+	</bean>
+
+  	<bean id="csvProductReader" class="org.springframework.batch.item.file.FlatFileItemReader" scope="step">
 		<property name="resource" value="file:input/csv/product.csv" />
 		<property name="linesToSkip" value="1" />
 		<property name="lineMapper">
@@ -52,10 +60,10 @@
 		</property>
 	</bean>
 
-<!--  	<bean id="jdbcWriter" class="com.ds.BetterProductJdbcItemWriter">
+  	<bean id="jdbcProductWriter" class="com.ds.ProductJdbcItemWriter">
 		<constructor-arg ref="dataSource" />
 	</bean>
- -->
+
 <!-- 	<bean id="betterProductItemWriter" class="org.springframework.batch.item.file.FlatFileItemWriter">
 		<property name="resource" value="file:output/BetterProduct.txt" />
 		<property name="lineAggregator">
@@ -63,7 +71,7 @@
 		</property>
 	</bean>
  -->
- <bean id="betterProductItemWriter" class="org.springframework.batch.item.file.FlatFileItemWriter">
+ <bean id="betterProductCsvWriter" class="org.springframework.batch.item.file.FlatFileItemWriter">
 	  <property name="resource" value="file:output/BetterProduct.csv" />
       <property name="shouldDeleteIfExists" value="true" />
       <property name="lineAggregator">
@@ -77,5 +85,15 @@
          </bean>
       </property>
    </bean>
+
+
+
+	<bean id="processor" class="com.ds.ProductItemProcessor"/>	
+	<bean id="betterProductProcessor" class="com.ds.BetterProductItemProcessor"/>	
+ 	<bean id="writer" class="org.springframework.batch.item.support.ListItemWriter" />
+	<bean id="memoryItemReader" class="com.ds.MemoryItemReader" scope="step">
+		<constructor-arg ref="writer" />
+	</bean>	
+
    
  </beans>

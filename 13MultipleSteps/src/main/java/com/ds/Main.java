@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.JobParametersInvalidException;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
@@ -24,9 +25,10 @@ public class Main {
 
 		JobLauncher jobLauncher = (JobLauncher) context.getBean("jobLauncher");
 		Job job = (Job) context.getBean("importProducts");
+		JobParameters jobParameters = new JobParametersBuilder().addString("price", "100").toJobParameters();		
 
 		try {
-			JobExecution execution = jobLauncher.run(job, new JobParameters());
+			JobExecution execution = jobLauncher.run(job, jobParameters);
 			System.out.println("Exit Status : " + execution.getStatus());
 		} catch (JobExecutionAlreadyRunningException | JobRestartException | JobInstanceAlreadyCompleteException | JobParametersInvalidException e) {
 	         e.printStackTrace();

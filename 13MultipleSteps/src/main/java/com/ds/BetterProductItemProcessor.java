@@ -10,6 +10,7 @@ import org.springframework.batch.item.ItemProcessor;
 public class BetterProductItemProcessor implements ItemProcessor<Product, BetterProduct>{
 	public BetterProduct process(final Product product) throws Exception {
 		
+		Thread.sleep(1000);
 		
 		final String id = product.getId().toUpperCase();
 		final String name = product.getName().toUpperCase();
