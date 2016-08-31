@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:batch="http://www.springframework.org/schema/batch"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	
+		http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+		http://www.springframework.org/schema/batch
+		http://www.springframework.org/schema/batch/spring-batch.xsd">
+		
+	<import resource="../config/datasource-config.xml" />
+	<import resource="../config/job-context.xml" />
+	
+
+	<bean id="processor" class="com.ds.ProductItemProcessor"/>	
+	<bean id="betterProductProcessor" class="com.ds.BetterProductItemProcessor"/>	
+ 	<bean id="writer" class="org.springframework.batch.item.support.ListItemWriter" />
+	<bean id="memoryItemReader" class="com.ds.MemoryItemReader">
+		<constructor-arg ref="writer" />
+	</bean>	
+
+	<batch:job id="importProducts">
+		<batch:step id="readWriteProducts" next="readWriteBetterProducts">
+			<batch:tasklet>
+				<batch:chunk reader="reader" processor="processor" writer="writer" commit-interval="100"/>
+			</batch:tasklet>
+		</batch:step>
+		
+		<batch:step id="readWriteBetterProducts">
+			<batch:tasklet>
+				<batch:chunk reader="memoryItemReader" processor="betterProductProcessor" writer="betterProductItemWriter" commit-interval="100"/>
+			</batch:tasklet>
+		</batch:step>
+	</batch:job>
+
+
+ 	<bean id="reader" class="org.springframework.batch.item.file.FlatFileItemReader" scope="step">
+		<property name="resource" value="file:input/csv/product.csv" />
+		<property name="linesToSkip" value="1" />
+		<property name="lineMapper">
+			<bean class="org.springframework.batch.item.file.mapping.DefaultLineMapper">
+				<property name="lineTokenizer">
+					<bean class="org.springframework.batch.item.file.transform.DelimitedLineTokenizer">
+						<property name="names" value="PRODUCT_ID, NAME,DESCRIPTION,PRICE" />
+						<property name="delimiter" value="," />
+					</bean>
+				</property>
+				<property name="fieldSetMapper">
+					<bean class="com.ds.ProductFieldSetMapper" />
+				</property>
+			</bean>
+		</property>
+	</bean>
+
+<!--  	<bean id="jdbcWriter" class="com.ds.BetterProductJdbcItemWriter">
+		<constructor-arg ref="dataSource" />
+	</bean>
+ -->
+<!-- 	<bean id="betterProductItemWriter" class="org.springframework.batch.item.file.FlatFileItemWriter">
+		<property name="resource" value="file:output/BetterProduct.txt" />
+		<property name="lineAggregator">
+			<bean class="org.springframework.batch.item.file.transform.PassThroughLineAggregator" />
+		</property>
+	</bean>
+ -->
+ <bean id="betterProductItemWriter" class="org.springframework.batch.item.file.FlatFileItemWriter">
+	  <property name="resource" value="file:output/BetterProduct.csv" />
+      <property name="shouldDeleteIfExists" value="true" />
+      <property name="lineAggregator">
+         <bean class="org.springframework.batch.item.file.transform.DelimitedLineAggregator">
+            <property name="delimiter" value="," />
+            <property name="fieldExtractor">
+               <bean class="org.springframework.batch.item.file.transform.BeanWrapperFieldExtractor">
+                  <property name="names" value="id, name, description, manufacturedDate" />
+               </bean>
+            </property>
+         </bean>
+      </property>
+   </bean>
+   
+ </beans>
