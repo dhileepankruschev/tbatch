@@ -15,7 +15,7 @@
 	<bean id="processor" class="com.ds.ProductItemProcessor"/>	
 	<bean id="betterProductProcessor" class="com.ds.BetterProductItemProcessor"/>	
  	<bean id="writer" class="org.springframework.batch.item.support.ListItemWriter" />
-	<bean id="memoryItemReader" class="com.ds.MemoryItemReader">
+	<bean id="memoryItemReader" class="com.ds.MemoryItemReader" scope="step">
 		<constructor-arg ref="writer" />
 	</bean>	
 
