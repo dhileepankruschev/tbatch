@@ -49,6 +49,13 @@ public class DecompressTasklet implements Tasklet {
 		System.out.println("Wrtten decompressed data in : " + target.getAbsolutePath());
 		Thread.sleep(2000);
 
+		// Step will repeat itself if takslet returns RepeatStatus.CONTINUABLE
+		/*
+		if(5<6){
+			System.out.println("Repeating step : "+chunkContext.getStepContext().getStepExecution().getStepName());
+			return RepeatStatus.CONTINUABLE;
+		}
+		*/
 		return RepeatStatus.FINISHED;
 	}
 
