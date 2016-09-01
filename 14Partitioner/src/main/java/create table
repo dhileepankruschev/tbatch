@@ -1,0 +1,10 @@
+create database test;
+
+use test;
+
+
+drop table if exists users;
+
+create table users (id int NOT NULL AUTO_INCREMENT PRIMARY KEY, USER_LOGIN varchar(30), USER_PASS varchar(30), AGE int);
+
+
