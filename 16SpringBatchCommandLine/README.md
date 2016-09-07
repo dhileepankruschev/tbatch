@@ -12,3 +12,5 @@ If mvn says: Error: Could not find or load main class org.springframework.batch.
 		M2_HOME
 		M2
 		JAVA_HOME
+		
+		
