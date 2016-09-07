@@ -1,0 +1,29 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+ http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+ http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+ http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+ http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd">
+
+	<aop:aspectj-autoproxy></aop:aspectj-autoproxy>
+	<context:annotation-config />
+	<context:component-scan base-package="com.tkhts.aspect, com.tkhts.service" />
+
+	
+
+
+	<!-- <bean id="partyService" class="com.tkhts.service.PartyServiceImpl" /> -->
+
+	<!-- Aspect -->
+	<!-- <bean id="beforePartyAspect" class="com.tkhts.aspect.BeforePartyAspect" />
+	<bean id="aroundPartyAspect" class="com.tkhts.aspect.AroundPartyAspect" />
+	<bean id="afterThrowingPartyAspect" class="com.tkhts.aspect.AfterThrowingPartyAspect" />
+	<bean id="afterReturningPartyAspect" class="com.tkhts.aspect.AfterReturningPartyAspect" />
+	<bean id="afterPartyAspect" class="com.tkhts.aspect.AfterPartyAspect" />
+
+ -->
+
+</beans>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:batch="http://www.springframework.org/schema/batch"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/batch
+		http://www.springframework.org/schema/batch/spring-batch.xsd">
+		
+	<bean id="heterogonousXmlWriter" class="org.springframework.batch.item.xml.StaxEventItemWriter">
+		<property name="resource" value="file:output/xml/Records.xml" />
+		<property name="marshaller" ref="reportMarshaller" />
+		<property name="rootTagName" value="products" />
+	</bean>
+
+	<bean id="reportMarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+		<property name="classesToBeBound">
+			<list>
+				<value>com.ds.heterogonous.MobileProduct</value>
+				<value>com.ds.heterogonous.LaptopProduct</value>
+			</list>
+		</property>
+	</bean>
+
+</beans>
+
+
+
+
+
+
+
+
+
+

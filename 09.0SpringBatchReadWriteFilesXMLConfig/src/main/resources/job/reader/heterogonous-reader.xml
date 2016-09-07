@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:batch="http://www.springframework.org/schema/batch"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/batch
+		http://www.springframework.org/schema/batch/spring-batch.xsd">
+
+	<!-- FlatFileItemReader identifies data fields from file lines -->
+	<bean id="heterogonousReader" class="org.springframework.batch.item.file.FlatFileItemReader" scope="step">
+		<property name="resource" value="file:input/heterogonous-product" />
+		<property name="linesToSkip" value="2" />
+		<property name="comments" value="@" />
+		<property name="recordSeparatorPolicy" ref="productRecordSeparatorPolicy" />
+		<property name="lineMapper" ref="productLineMapper" />
+	</bean>
+
+	<!-- RecordSeparatorPolicy interface identifies and delimits records in a file -->
+	<bean id="productRecordSeparatorPolicy" class="org.springframework.batch.item.file.separator.DefaultRecordSeparatorPolicy" />
+
+	<!-- The LineMapper interface is responsible for extracting data from lines -->
+	<bean id="productLineMapper" class="org.springframework.batch.item.file.mapping.PatternMatchingCompositeLineMapper">
+		<property name="tokenizers">
+			<map>
+				<entry key="PRM*" value-ref="mobileProductLineTokenizer" />
+				<entry key="PRL*" value-ref="laptopProductLineTokenizer" />
+			</map>
+		</property>
+		<property name="fieldSetMappers">
+			<map>
+				<entry key="PRM*" value-ref="mobileProductFieldSetMapper" />
+				<entry key="PRL*" value-ref="laptopProductFieldSetMapper" />
+			</map>
+		</property>
+	</bean>
+	<bean id="mobileProductLineTokenizer"
+		class="org.springframework.batch.item.file.transform.DelimitedLineTokenizer">
+		<property name="delimiter" value="," />
+		<property name="names" value="PRODUCT_ID, NAME,DESCRIPTION,PRICE" />
+	</bean>
+	<bean id="mobileProductFieldSetMapper" class="com.ds.heterogonous.MobileProductFieldSetMapper"/>
+
+	<bean id="laptopProductLineTokenizer"
+		class="org.springframework.batch.item.file.transform.DelimitedLineTokenizer">
+		<property name="delimiter" value="," />
+		<property name="names" value="PRODUCT_ID, NAME,DESCRIPTION,PRICE" />
+	</bean>
+	<bean id="laptopProductFieldSetMapper" class="com.ds.heterogonous.LaptopProductFieldSetMapper"/>
+
+</beans>

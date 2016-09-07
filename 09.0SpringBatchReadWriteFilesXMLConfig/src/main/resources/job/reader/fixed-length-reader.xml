@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:batch="http://www.springframework.org/schema/batch"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/batch
+		http://www.springframework.org/schema/batch/spring-batch.xsd">
+
+	 <!-- FlatFileItemReader identifies data fields from file lines -->
+ 	<bean id="fixedLengthReader" class="org.springframework.batch.item.file.FlatFileItemReader" scope="step">
+		<property name="resource" value="file:input/fixed-length-product" />
+		<property name="linesToSkip" value="2" />
+		<property name="comments" value="@"/>
+		<property name="recordSeparatorPolicy" ref="productRecordSeparatorPolicy"/>
+		<property name="lineMapper" ref="productLineMapper"/>
+	</bean>
+
+	<!-- RecordSeparatorPolicy interface identifies and delimits records in a file -->
+	<bean id="productRecordSeparatorPolicy" class="org.springframework.batch.item.file.separator.DefaultRecordSeparatorPolicy"/>
+	
+	<!-- The LineMapper interface is responsible for extracting data from lines -->
+	<bean id="productLineMapper" class="org.springframework.batch.item.file.mapping.DefaultLineMapper">
+ 		<property name="lineTokenizer" ref="productLineTokenizer"/> 
+		<property name="fieldSetMapper" ref="productFieldSetMapper"/>
+	</bean>
+	
+	<!-- LineMapper Maps a data line to a data object -->
+	<bean id="productLineTokenizer" class="org.springframework.batch.item.file.transform.FixedLengthTokenizer">
+		<property name="columns" value="1-5,7-29,30-54,55-60"/>
+		<property name="names" value="PRODUCT_ID, NAME,DESCRIPTION,PRICE" />
+	</bean>
+	
+	<!-- FieldSetMapper creates a data object from tokens -->
+	<bean id="productFieldSetMapper" class="com.ds.ProductFieldSetMapper"/>
+
+
+</beans>

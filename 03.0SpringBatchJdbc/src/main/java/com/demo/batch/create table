@@ -1,0 +1,13 @@
+drop database test
+
+create database test
+
+use test
+
+create table order_table (
+	id int NOT NULL AUTO_INCREMENT PRIMARY KEY, 
+	CUSTID varchar(20), 
+	ORDERNUM varchar(20), 
+	COUNTRY varchar(20)
+);
+

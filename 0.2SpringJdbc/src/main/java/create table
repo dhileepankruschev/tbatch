@@ -1,0 +1,12 @@
+create database test;
+
+use test;
+
+create table student (
+	id int NOT NULL AUTO_INCREMENT PRIMARY KEY, 
+	NAME varchar(50), 
+	AGE int
+);
+
+create table student (id int NOT NULL AUTO_INCREMENT PRIMARY KEY, NAME varchar(50), AGE int);
+
