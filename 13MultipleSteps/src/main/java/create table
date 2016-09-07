@@ -1,8 +1,0 @@
-create database test;
-
-use test;
-
-create table product (id varchar(20), NAME varchar(50), DESCRIPTION varchar(200), PRICE decimal);
-
-create table betterproduct (id varchar(20), NAME varchar(50), DESCRIPTION varchar(200), PRICE decimal, MFD varchar(20));
-
